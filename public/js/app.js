@@ -8,7 +8,7 @@
   const defaultSession = {
     username: "Sari Anggraini",
     role: "Sales Admin",
-    plant: "BFM Semarang Plant",
+    plant: "BFM Klaten Plant",
     server: "ERP-PROD",
     database: "BFM_ERP"
   };
@@ -161,7 +161,7 @@
         </tbody>
       </table>
       <div style="margin-top: 8px; font-size: 11px; color: #555;">
-        * Showing top 5 of 14 pipeline records for BFM Semarang Plant.
+        * Showing top 5 of 14 pipeline records for BFM Klaten Plant.
       </div>
     `;
     openErpModal("Sales Pipeline - Summary & Forecast", html);
@@ -444,7 +444,7 @@
   // Sign out handler
   window.handleSignOut = function (e) {
     if (e) e.preventDefault();
-    if (confirm("Are you sure you want to log out from BFM Semarang Plant ERP?")) {
+    if (confirm("Are you sure you want to log out from BFM Klaten Plant ERP?")) {
       localStorage.removeItem("bfm_session");
       window.location.href = "/login";
     }
@@ -921,7 +921,7 @@
   function renderProductionView(container) {
     container.innerHTML = `
       <div class="breadcrumb-label">MES / Shop Floor Execution</div>
-      <h1 class="page-title">Stamping Lines Live Monitoring - BFM Semarang Plant</h1>
+      <h1 class="page-title">Stamping Lines Live Monitoring - BFM Klaten Plant</h1>
       <div class="dense-table-wrapper">
         <table class="dense-table">
           <thead>
@@ -1086,8 +1086,8 @@
           <tr><th>Parameter</th><th>Current Node Value</th><th>Environment / Scope</th><th>Status</th></tr>
         </thead>
         <tbody>
-          <tr><td>Cluster Node</td><td>ERP-PROD-01 (Semarang DC)</td><td>Core Production</td><td>Online (Latency 2ms)</td></tr>
-          <tr><td>Database Replica</td><td>BFM_ERP_SEMARANG_MASTER</td><td>PostgreSQL / Oracle ERP</td><td>Synchronized</td></tr>
+          <tr><td>Cluster Node</td><td>ERP-PROD-01 (Klaten DC)</td><td>Core Production</td><td>Online (Latency 2ms)</td></tr>
+          <tr><td>Database Replica</td><td>BFM_ERP_KLATEN_MASTER</td><td>PostgreSQL / Oracle ERP</td><td>Synchronized</td></tr>
           <tr><td>NAS Archival Target</td><td>\\\\BFM-NAS01\\Engineering\\Drawings\\</td><td>Internal File Cluster</td><td>3 Document Alerts Pending</td></tr>
           <tr><td>Default Stamping Currency</td><td>IDR (Indonesian Rupiah)</td><td>Commercial Quotations</td><td>Active</td></tr>
         </tbody>

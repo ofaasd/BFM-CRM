@@ -19,7 +19,7 @@ const mockData = {
   system: {
     company: "PT Big Fortune Mesindo",
     subsystem: "ERP and MES",
-    plant: "BFM Semarang Plant",
+    plant: "BFM Klaten Plant",
     server: "ERP-PROD",
     database: "BFM_ERP",
     version: "2.6.4-mfg"
@@ -124,7 +124,7 @@ app.post('/api/login', (req, res) => {
     user: {
       username: username || "Sari Anggraini",
       role: "Sales Admin",
-      plant: plant || "BFM Semarang Plant"
+      plant: plant || "BFM Klaten Plant"
     }
   });
 });

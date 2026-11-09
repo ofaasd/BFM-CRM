@@ -8,7 +8,7 @@ A high-density, compact enterprise CRM & Manufacturing Execution System (MES) mo
 Designed specifically for **industrial / manufacturing shop-floor and commercial office operations**:
 - **High Information Density**: Compact tables, zero unnecessary whitespace or padding, maximized data visibility.
 - **Accurate Branding**: PT Big Fortune Mesindo industrial branding with custom amber/orange accent (`#df6600`).
-- **Manufacturing Controls**: Multi-plant selector (*BFM Semarang Plant*, *BFM Cikarang Plant*, *BFM Surabaya Plant*), shift selection (*Shift 1/2/3/Normal*), and workstation indicators.
+- **Manufacturing Controls**: Multi-plant selector (*BFM Klaten Plant*, *BFM Cikarang Plant*, *BFM Surabaya Plant*), shift selection (*Shift 1/2/3/Normal*), and workstation indicators.
 - **Classic Desktop ERP Feel**: Fixed bottom status bar displaying terminal readiness, active server node (`ERP-PROD`), database cluster (`BFM_ERP`), and real-time operator clock.
 - **Offline Self-Contained**: Metro UI CSS and JS bundled locally in `public/` for offline reliability on industrial networks.
 
@@ -45,7 +45,7 @@ node server.js
 
 2. **Improvised Industrial Login Page**:
    - High-density Metro authentication terminal.
-   - Facility selector (Semarang, Cikarang, Surabaya).
+   - Facility selector (Klaten, Cikarang, Surabaya).
    - Domain selector (CRM, MES, Quality Assurance, Supply Chain).
    - Workstation & shift selector (Shift 1, 2, 3, Normal).
    - Quick operator mock presets (`Sari Anggraini`, `Budi Santoso`, `Hendra Kusuma`).
