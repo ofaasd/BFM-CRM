@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Register - PT Big Fortune Mesindo ERP and MES</title>
+  <!-- Metro UI Framework -->
+  <link rel="stylesheet" href="/css/metro-all.min.css">
+  <!-- High Density Manufacturing Custom CSS -->
+  <link rel="stylesheet" href="/css/app-manufacturing.css">
+  <style>
+    /* Specific Document Register Layout */
+    .doc-filter-container {
+      border: 1px solid var(--bfm-border);
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      background-color: #ffffff;
+    }
+
+    .doc-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 4px;
+    }
+
+    .doc-filter-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .doc-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-filter-group label {
+      font-size: 11px;
+      color: #2b3340;
+      white-space: nowrap;
+    }
+
+    .doc-filter-group .mfg-input,
+    .doc-filter-group .mfg-select {
+      height: 23px;
+      padding: 2px 6px;
+      font-size: 11px;
+      border: 1px solid #b8c0cc;
+      background: #ffffff;
+    }
+
+    .doc-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .doc-stat-summary {
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .status-missing-badge {
+      color: #9d1414;
+      font-weight: 700;
+    }
+
+    .status-pending-badge {
+      color: #b45309;
+      font-weight: 700;
+    }
+
+    .status-checksum-badge {
+      color: #9d1414;
+      font-weight: 700;
+    }
+
+    .status-active-badge {
+      color: #15803d;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="erp-container">
+
+    <!-- Top Header Bar -->
+    <header class="erp-header">
+      <div class="erp-brand-wrap">
+        <div class="erp-brand-title">
+          PT Big Fortune<span class="brand-orange">Mesindo</span>
+        </div>
+        <div class="erp-brand-subtitle">ERP and MES</div>
+      </div>
+
+      <div class="erp-user-meta">
+        <div>Company: <span id="header-plant-display"><strong>BFM Semarang Plant</strong></span></div>
+        <div>User: <span id="header-user-display"><strong>Sari Anggraini</strong> (Sales Admin)</span></div>
+        <a href="/login" class="erp-signout-btn" onclick="handleSignOut(event)">Sign out</a>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="erp-nav-bar">
+      <a class="erp-nav-tab" href="/">Home</a>
+      <a class="erp-nav-tab" href="/crm">CRM</a>
+      <a class="erp-nav-tab" href="/quotations">Quotations</a>
+      <a class="erp-nav-tab active" href="/documents">Documents</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Production')">Production</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Inventory')">Inventory</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Reports')">Reports</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Setup')">Setup</a>
+    </nav>
+
+    <!-- Main Workspace Body -->
+    <div class="erp-body">
+
+      <!-- Left Sidebar: High-Density Counters -->
+      <aside class="erp-sidebar">
+        <!-- CRM Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CRM</div>
+          <a class="sidebar-item" href="/crm">
+            <span class="item-label">Sales pipeline</span>
+            <span class="item-count">14</span>
+          </a>
+          <a class="sidebar-item" href="/quotations">
+            <span class="item-label">Quotations</span>
+            <span class="item-count">9</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Customers</span>
+            <span class="item-count">126</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Contracts</span>
+            <span class="item-count">18</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Sales orders</span>
+            <span class="item-count">41</span>
+          </a>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Documents</div>
+          <a class="sidebar-item selected" href="/documents" onclick="resetDocFilters()">
+            <span class="item-label">Document register</span>
+            <span class="item-count" id="sidebar-total-docs">3,284</span>
+          </a>
+          <a class="sidebar-item alert" href="javascript:showNeedsAttention()">
+            <span class="item-label">Needs attention</span>
+            <span class="item-count" id="sidebar-alert-docs">4</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Center / Right Main Content -->
+      <main class="erp-content">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-label" id="main-breadcrumb">Documents &gt; Document register</div>
+        <!-- Title -->
+        <h1 class="page-title" style="margin-bottom: 6px;">Document register</h1>
+
+        <!-- Filter Box matching image -->
+        <div class="doc-filter-container">
+          <!-- Row 1: Document no & Customer -->
+          <div class="doc-filter-row">
+            <div class="doc-filter-group" style="width: 320px;">
+              <label for="filter-doc-no" style="width: 100px;">Document no</label>
+              <input type="text" class="mfg-input" id="filter-doc-no" placeholder="e.g. DRW-BKT4411" style="flex:1;" oninput="applyFilters()">
+            </div>
+            <div class="doc-filter-group" style="width: 290px;">
+              <label for="filter-customer" style="width: 60px;">Customer</label>
+              <select class="mfg-select" id="filter-customer" style="flex:1;" onchange="applyFilters()">
+                <option value="All" selected>All customers</option>
+                <option value="PT Sumber Otomotif Nusantara">PT Sumber Otomotif Nusantara</option>
+                <option value="PT Elektra Presisi Jaya">PT Elektra Presisi Jaya</option>
+                <option value="PT Maju Peralatan Rumah">PT Maju Peralatan Rumah</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Document type & Status -->
+          <div class="doc-filter-row" style="margin-top: 4px;">
+            <div class="doc-filter-group" style="width: 320px;">
+              <label for="filter-type" style="width: 100px;">Document type</label>
+              <select class="mfg-select" id="filter-type" style="flex:1;" onchange="applyFilters()">
+                <option value="All" selected>All types</option>
+                <option value="Drawing">Drawing</option>
+                <option value="Quality">Quality</option>
+                <option value="Quotation">Quotation</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
+            <div class="doc-filter-group" style="width: 290px;">
+              <label for="filter-status" style="width: 60px;">Status</label>
+              <select class="mfg-select" id="filter-status" style="flex:1;" onchange="applyFilters()">
+                <option value="All" selected>All</option>
+                <option value="Missing">Missing</option>
+                <option value="Pending storage">Pending storage</option>
+                <option value="Checksum mismatch">Checksum mismatch</option>
+                <option value="Active">Active</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Bar: Upload, Run check, Search + Stats -->
+        <div class="doc-action-bar">
+          <div class="crm-btn-group">
+            <button class="btn-new-opportunity" onclick="openUploadModal()" style="padding: 3px 12px; font-weight:700;">Upload</button>
+            <button class="btn-action-tool" onclick="runNasCheck()">Run check</button>
+            <button class="btn-action-tool" onclick="applyFilters()">Search</button>
+          </div>
+          <div class="doc-stat-summary" id="doc-stat-line">
+            Missing: <span id="stat-missing" style="font-weight:600;">1</span> | Orphan: <span id="stat-orphan">0</span> | Checksum mismatch: <span id="stat-checksum" style="font-weight:600;">1</span> | Total: <span id="stat-total">3,284</span>
+          </div>
+        </div>
+
+        <!-- Document Register Table -->
+        <div class="dense-table-wrapper">
+          <table class="dense-table" id="doc-register-table">
+            <thead>
+              <tr>
+                <th style="width: 12%;">Document no</th>
+                <th style="width: 20%;">Title</th>
+                <th style="width: 21%;">Customer</th>
+                <th style="width: 4%;">Rev</th>
+                <th style="width: 8%;">Type</th>
+                <th style="width: 23%;">NAS path (relative)</th>
+                <th style="width: 14%;">Status</th>
+                <th style="width: 10%;">Uploaded</th>
+                <th style="width: 6%;">By</th>
+              </tr>
+            </thead>
+            <tbody id="doc-table-body">
+              <!-- Rendered dynamically by JavaScript with initial dataset -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer -->
+        <div class="crm-table-footer">
+          <div class="total-summary" id="doc-footer-showing">Showing 6 of 3,284 records</div>
+          <div class="paging-info">Page 1 of 548</div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Bottom Windows ERP Status Bar -->
+    <footer class="erp-status-bar">
+      <div class="status-bar-left">
+        <span class="status-item"><span class="status-indicator-dot"></span> Ready</span>
+        <span class="status-item">Server: <span id="status-server-display">ERP-PROD</span></span>
+        <span class="status-item">Database: <span id="status-db-display">BFM_ERP</span></span>
+      </div>
+      <div class="status-bar-right">
+        <span class="status-item">Logged in: <span id="status-user-display">Sari Anggraini</span></span>
+        <span class="status-item" id="status-live-time">07 Nov 2026 09:14</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Metro Modal Backdrop & Dialog Container -->
+  <div class="metro-modal-backdrop" id="erp-modal-backdrop" onclick="if(event.target === this) closeErpModal()">
+    <div class="metro-modal-window">
+      <div class="metro-modal-header">
+        <span id="erp-modal-title">Record Details</span>
+        <button onclick="closeErpModal()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#444;">&times;</button>
+      </div>
+      <div class="metro-modal-body" id="erp-modal-body"></div>
+      <div class="metro-modal-footer" id="erp-modal-footer">
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/metro.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    // In-Memory Temporary State for Documents
+    const initialDocuments = [
+      {
+        id: "DRW-BKT4411",
+        title: "Bracket left, drawing",
+        customer: "PT Sumber Otomotif Nusantara",
+        rev: "C",
+        type: "Drawing",
+        nasPath: "PART/SON/BKT-4411/revC/",
+        status: "Missing",
+        uploaded: "15 Mar 2026",
+        by: "Dani",
+        fileName: "DRW-BKT4411_C_DRAWING_20260315.pdf"
+      },
+      {
+        id: "PPAP-HSG0932",
+        title: "PPAP level 3 package",
+        customer: "PT Elektra Presisi Jaya",
+        rev: "L3",
+        type: "Quality",
+        nasPath: "PART/EPJ/HSG-0932/revA/",
+        status: "Pending storage",
+        uploaded: "02 Nov 2026",
+        by: "Sari",
+        fileName: "PPAP-HSG0932_L3_20261102.pdf"
+      },
+      {
+        id: "CoC-CVR1208",
+        title: "Certificate of conformity",
+        customer: "PT Maju Peralatan Rumah",
+        rev: "R1",
+        type: "Quality",
+        nasPath: "CUSTOMER/MPR/CVR-1208/",
+        status: "Checksum mismatch",
+        uploaded: "19 Oct 2026",
+        by: "Rina",
+        fileName: "CoC-CVR1208_R1_20261019.pdf"
+      },
+      {
+        id: "QT-2026-0153-r02",
+        title: "Customer quotation PDF",
+        customer: "PT Sumber Otomotif Nusantara",
+        rev: "02",
+        type: "Quotation",
+        nasPath: "QUOTATION/2026/QT-2026-0153/rev02/",
+        status: "Active",
+        uploaded: "06 Nov 2026",
+        by: "Sari",
+        fileName: "QT-2026-0153_r02_Customer.pdf"
+      },
+      {
+        id: "COST-0153-r02",
+        title: "Internal cost basis (restricted)",
+        customer: "PT Sumber Otomotif Nusantara",
+        rev: "02",
+        type: "Quotation",
+        nasPath: "QUOTATION/2026/QT-2026-0153/rev02/",
+        status: "Active",
+        uploaded: "06 Nov 2026",
+        by: "Dani",
+        fileName: "COST_0153_r02_Internal.xlsx"
+      },
+      {
+        id: "CTR-SON-2026-01",
+        title: "Price agreement with resin clause",
+        customer: "PT Sumber Otomotif Nusantara",
+        rev: "00",
+        type: "Contract",
+        nasPath: "CONTRACT/CTR-SON-2026-01/",
+        status: "Active",
+        uploaded: "03 Jan 2026",
+        by: "Rina",
+        fileName: "CTR_SON_2026_01_Signed.pdf"
+      }
+    ];
+
+    // Read from sessionStorage or use initial dataset
+    function getStoredDocs() {
+      try {
+        const stored = sessionStorage.getItem("bfm_documents");
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+      return initialDocuments;
+    }
+
+    function saveStoredDocs(docs) {
+      sessionStorage.setItem("bfm_documents", JSON.stringify(docs));
+    }
+
+    let documentsData = getStoredDocs();
+
+    function renderDocTable(items) {
+      const tbody = document.getElementById("doc-table-body");
+      tbody.innerHTML = "";
+
+      items.forEach(doc => {
+        let statusBadge = "";
+        if (doc.status === "Missing") {
+          statusBadge = `<span class="status-missing-badge">Missing</span>`;
+        } else if (doc.status === "Pending storage") {
+          statusBadge = `<span class="status-pending-badge">Pending storage</span>`;
+        } else if (doc.status === "Checksum mismatch") {
+          statusBadge = `<span class="status-checksum-badge">Checksum mismatch</span>`;
+        } else {
+          statusBadge = `<span class="status-active-badge">Active</span>`;
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><a href="javascript:inspectDocModal('${doc.id}')">${doc.id}</a></td>
+          <td>${doc.title}</td>
+          <td>${doc.customer}</td>
+          <td class="text-center">${doc.rev}</td>
+          <td>${doc.type}</td>
+          <td><code>${doc.nasPath}</code></td>
+          <td>${statusBadge}</td>
+          <td>${doc.uploaded}</td>
+          <td>${doc.by}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Update stat summary
+      updateStats();
+      document.getElementById("doc-footer-showing").innerText = `Showing ${items.length} of 3,284 records`;
+    }
+
+    function updateStats() {
+      const missingCount = documentsData.filter(d => d.status === "Missing").length;
+      const checksumCount = documentsData.filter(d => d.status === "Checksum mismatch").length;
+      const pendingCount = documentsData.filter(d => d.status === "Pending storage").length;
+      const attentionCount = missingCount + checksumCount + pendingCount;
+
+      document.getElementById("stat-missing").innerText = missingCount;
+      document.getElementById("stat-checksum").innerText = checksumCount;
+      const alertSidebar = document.getElementById("sidebar-alert-docs");
+      if (alertSidebar) alertSidebar.innerText = attentionCount;
+    }
+
+    // Filter Logic
+    function applyFilters() {
+      const docNo = document.getElementById("filter-doc-no").value.trim().toLowerCase();
+      const customer = document.getElementById("filter-customer").value;
+      const type = document.getElementById("filter-type").value;
+      const status = document.getElementById("filter-status").value;
+
+      const filtered = documentsData.filter(doc => {
+        let ok = true;
+        if (docNo && !doc.id.toLowerCase().includes(docNo) && !doc.title.toLowerCase().includes(docNo)) ok = false;
+        if (customer !== "All" && doc.customer !== customer) ok = false;
+        if (type !== "All" && doc.type !== type) ok = false;
+        if (status !== "All" && doc.status !== status) ok = false;
+        return ok;
+      });
+
+      renderDocTable(filtered);
+    }
+
+    function resetDocFilters() {
+      document.getElementById("filter-doc-no").value = "";
+      document.getElementById("filter-customer").value = "All";
+      document.getElementById("filter-type").value = "All";
+      document.getElementById("filter-status").value = "All";
+      applyFilters();
+    }
+
+    function showNeedsAttention() {
+      document.getElementById("filter-status").value = "Missing";
+      applyFilters();
+      if (window.Metro && window.Metro.toast) {
+        Metro.toast.create("Filtered: Showing documents requiring immediate attention.", null, 2500, "warning");
+      }
+    }
+
+    // Modal: Inspect Document with quick actions
+    window.inspectDocModal = function(id) {
+      const doc = documentsData.find(d => d.id === id);
+      if (!doc) return;
+
+      let actionHtml = "";
+      if (doc.status === "Missing") {
+        actionHtml = `
+          <div style="background:#fff5f5; border:1px solid #fecaca; padding:8px; margin-top:10px;">
+            <div style="font-weight:700; color:#991b1b; margin-bottom:4px;">Resolve Missing File:</div>
+            <div>File is not detected at <code>\\\\BFM-NAS01\\Engineering\\${doc.nasPath}</code>.</div>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <input type="file" id="modal-file-input" style="font-size:11px;">
+              <button class="metro-dense-btn btn-primary" onclick="resolveMissing('${doc.id}')">Upload & Restore on NAS</button>
+            </div>
+          </div>
+        `;
+      } else if (doc.status === "Checksum mismatch") {
+        actionHtml = `
+          <div style="background:#fff5f5; border:1px solid #fecaca; padding:8px; margin-top:10px;">
+            <div style="font-weight:700; color:#991b1b; margin-bottom:4px;">Security Hash Mismatch Alert:</div>
+            <div>SHA-256 hash differs from engineering registry. File is currently locked in quarantine.</div>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button class="metro-dense-btn btn-primary" onclick="resolveChecksum('${doc.id}')">Approve & Accept New Hash</button>
+              <button class="metro-dense-btn" onclick="alert('Rollback to previous revision CVR-1208_R0 initiated.'); closeErpModal();">Rollback to Revision 00</button>
+            </div>
+          </div>
+        `;
+      } else if (doc.status === "Pending storage") {
+        actionHtml = `
+          <div style="background:#fffbeb; border:1px solid #fde68a; padding:8px; margin-top:10px;">
+            <div style="font-weight:700; color:#92400e; margin-bottom:4px;">Pending Storage Check:</div>
+            <div>Waiting for antivirus scan and replication on backup cluster.</div>
+            <div style="margin-top:8px;">
+              <button class="metro-dense-btn btn-primary" onclick="resolvePending('${doc.id}')">Force Immediate Storage Check</button>
+            </div>
+          </div>
+        `;
+      } else {
+        actionHtml = `
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:8px; margin-top:10px;">
+            <div style="font-weight:700; color:#065f46;">Verified NAS Document:</div>
+            <div>File is synchronized and indexed with SHA-256 integrity match.</div>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button class="metro-dense-btn" onclick="alert('Downloading ${doc.fileName} from NAS storage...');">Download File</button>
+              <button class="metro-dense-btn" onclick="alert('Opening online preview viewer...');">Preview Document</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const html = `
+        <div style="display:grid; grid-template-columns: 120px 1fr; gap:6px; font-size:11.5px;">
+          <strong>Document No:</strong> <span><strong>${doc.id}</strong> (Rev ${doc.rev})</span>
+          <strong>Title:</strong> <span>${doc.title}</span>
+          <strong>Customer:</strong> <span>${doc.customer}</span>
+          <strong>Type:</strong> <span>${doc.type}</span>
+          <strong>File Name:</strong> <span><code>${doc.fileName}</code></span>
+          <strong>NAS Path:</strong> <span><code>\\\\BFM-NAS01\\Engineering\\${doc.nasPath}</code></span>
+          <strong>Status:</strong> <span>${doc.status}</span>
+          <strong>Uploaded Date:</strong> <span>${doc.uploaded} by <strong>${doc.by}</strong></span>
+        </div>
+        ${actionHtml}
+      `;
+
+      const footer = `
+        <button class="metro-dense-btn" style="color:#b91c1c;" onclick="deleteDocRecord('${doc.id}')">Delete Entry</button>
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      `;
+
+      openErpModal(`Document Details - ${doc.id}`, html, footer);
+    };
+
+    // Operation 1: Resolve Missing
+    window.resolveMissing = function(id) {
+      const doc = documentsData.find(d => d.id === id);
+      if (doc) {
+        doc.status = "Active";
+        saveStoredDocs(documentsData);
+        applyFilters();
+        closeErpModal();
+        if (window.Metro && window.Metro.toast) {
+          Metro.toast.create(`Restored ${id} on NAS. Status changed to Active.`, null, 3000, "success");
+        } else {
+          alert(`Restored ${id} on NAS. Status changed to Active.`);
+        }
+      }
+    };
+
+    // Operation 2: Resolve Checksum
+    window.resolveChecksum = function(id) {
+      const doc = documentsData.find(d => d.id === id);
+      if (doc) {
+        doc.status = "Active";
+        saveStoredDocs(documentsData);
+        applyFilters();
+        closeErpModal();
+        if (window.Metro && window.Metro.toast) {
+          Metro.toast.create(`Approved hash for ${id}. Quarantine cleared.`, null, 3000, "success");
+        } else {
+          alert(`Approved hash for ${id}. Quarantine cleared.`);
+        }
+      }
+    };
+
+    // Operation 3: Resolve Pending
+    window.resolvePending = function(id) {
+      const doc = documentsData.find(d => d.id === id);
+      if (doc) {
+        doc.status = "Active";
+        saveStoredDocs(documentsData);
+        applyFilters();
+        closeErpModal();
+        if (window.Metro && window.Metro.toast) {
+          Metro.toast.create(`Storage scan complete for ${id}. Status Active.`, null, 3000, "success");
+        } else {
+          alert(`Storage scan complete for ${id}. Status Active.`);
+        }
+      }
+    };
+
+    // Operation 4: Delete Record
+    window.deleteDocRecord = function(id) {
+      if (confirm(`Remove record ${id} from Document Register?`)) {
+        documentsData = documentsData.filter(d => d.id !== id);
+        saveStoredDocs(documentsData);
+        applyFilters();
+        closeErpModal();
+      }
+    };
+
+    // Operation 5: Upload New Document
+    window.openUploadModal = function() {
+      const html = `
+        <form onsubmit="handleUploadSubmit(event)">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Document No</label>
+              <input type="text" class="mfg-input" id="up-doc-no" value="DRW-BKT4411-N" placeholder="e.g. DRW-BKT4411" required>
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Revision</label>
+              <input type="text" class="mfg-input" id="up-rev" value="01" required>
+            </div>
+          </div>
+
+          <div class="mfg-form-group">
+            <label class="mfg-form-label">Document Title / Description</label>
+            <input type="text" class="mfg-input" id="up-title" value="Mounting bracket assembly drawing" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Customer</label>
+              <select class="mfg-select" id="up-customer">
+                <option value="PT Sumber Otomotif Nusantara">PT Sumber Otomotif Nusantara</option>
+                <option value="PT Elektra Presisi Jaya">PT Elektra Presisi Jaya</option>
+                <option value="PT Maju Peralatan Rumah">PT Maju Peralatan Rumah</option>
+              </select>
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Document Type</label>
+              <select class="mfg-select" id="up-type">
+                <option value="Drawing">Drawing</option>
+                <option value="Quality">Quality</option>
+                <option value="Quotation">Quotation</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mfg-form-group">
+            <label class="mfg-form-label">Target Relative NAS Path</label>
+            <input type="text" class="mfg-input" id="up-path" value="PART/SON/BKT-4411/rev01/">
+          </div>
+
+          <div class="mfg-form-group">
+            <label class="mfg-form-label">File to Upload (.pdf, .dwg, .step)</label>
+            <input type="file" class="mfg-input" id="up-file">
+          </div>
+
+          <div style="margin-top:12px; display:flex; justify-content:flex-end; gap:6px;">
+            <button type="button" class="metro-dense-btn" onclick="closeErpModal()">Cancel</button>
+            <button type="submit" class="metro-dense-btn btn-primary">Upload & Register</button>
+          </div>
+        </form>
+      `;
+      openErpModal("Upload & Register Technical Document", html);
+    };
+
+    window.handleUploadSubmit = function(e) {
+      e.preventDefault();
+      const id = document.getElementById("up-doc-no").value.trim();
+      const rev = document.getElementById("up-rev").value.trim();
+      const title = document.getElementById("up-title").value.trim();
+      const customer = document.getElementById("up-customer").value;
+      const type = document.getElementById("up-type").value;
+      const path = document.getElementById("up-path").value.trim();
+
+      const newDoc = {
+        id: id,
+        title: title,
+        customer: customer,
+        rev: rev,
+        type: type,
+        nasPath: path,
+        status: "Active",
+        uploaded: "07 Nov 2026",
+        by: "Sari",
+        fileName: `${id}_${rev}.pdf`
+      };
+
+      // Add to beginning of array
+      documentsData.unshift(newDoc);
+      saveStoredDocs(documentsData);
+      applyFilters();
+      closeErpModal();
+
+      if (window.Metro && window.Metro.toast) {
+        Metro.toast.create(`Document ${id} registered successfully to NAS path.`, null, 3000, "success");
+      } else {
+        alert(`Document ${id} registered successfully to NAS path.`);
+      }
+    };
+
+    // Operation 6: Run check
+    window.runNasCheck = function() {
+      if (window.Metro && window.Metro.toast) {
+        Metro.toast.create("Checking file integrity across \\\\BFM-NAS01\\Engineering...", null, 2000, "info");
+      }
+      setTimeout(() => {
+        const html = `
+          <div style="font-size:11.5px; line-height:1.4;">
+            <div style="padding:8px; background:#f8fafc; border:1px solid #cbd5e1; margin-bottom:10px;">
+              <strong>NAS Integrity Check Completed</strong><br>
+              Server: <code>\\\\BFM-NAS01\\Engineering\\</code><br>
+              Scanned: <strong>3,284 files</strong> | Duration: <strong>1.4 seconds</strong>
+            </div>
+
+            <table class="dense-table">
+              <thead>
+                <tr><th>Document</th><th>Issue Detected</th><th>Suggested Action</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>DRW-BKT4411</code></td>
+                  <td><span class="status-missing-badge">Missing on NAS</span></td>
+                  <td><button class="metro-dense-btn" onclick="resolveMissing('DRW-BKT4411');">Restore File</button></td>
+                </tr>
+                <tr>
+                  <td><code>PPAP-HSG0932</code></td>
+                  <td><span class="status-pending-badge">Pending Storage</span></td>
+                  <td><button class="metro-dense-btn" onclick="resolvePending('PPAP-HSG0932');">Force Sync</button></td>
+                </tr>
+                <tr>
+                  <td><code>CoC-CVR1208</code></td>
+                  <td><span class="status-checksum-badge">Checksum Mismatch</span></td>
+                  <td><button class="metro-dense-btn" onclick="resolveChecksum('CoC-CVR1208');">Approve Hash</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+        openErpModal("NAS File Integrity Audit Results", html);
+      }, 500);
+    };
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", function() {
+      renderDocTable(documentsData);
+    });
+  </script>
+</body>
+</html>

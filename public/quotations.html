@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotation QT-2026-0153, revision 02 - PT Big Fortune Mesindo ERP and MES</title>
+  <!-- Metro UI Framework -->
+  <link rel="stylesheet" href="/css/metro-all.min.css">
+  <!-- High Density Manufacturing Custom CSS -->
+  <link rel="stylesheet" href="/css/app-manufacturing.css">
+  <style>
+    /* Specific Quotation Form & Cost Basis Styles */
+    .quote-header-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 12px 24px;
+      margin-bottom: 8px;
+    }
+
+    .quote-field-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3.5px;
+    }
+
+    .quote-field-label {
+      width: 72px;
+      min-width: 72px;
+      font-size: 11px;
+      color: #4b5563;
+      text-align: right;
+      padding-right: 8px;
+    }
+
+    .quote-field-row .mfg-input {
+      flex: 1;
+      height: 22px;
+      padding: 2px 6px;
+      font-size: 11px;
+      border: 1px solid #c8ccd4;
+      background: #ffffff;
+    }
+
+    .quote-sub-tabs {
+      display: flex;
+      gap: 1px;
+      border-bottom: 1px solid var(--bfm-border);
+      margin-top: 10px;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+
+    .quote-sub-tab {
+      padding: 3px 10px;
+      font-size: 11px;
+      background: #f1f3f6;
+      border: 1px solid var(--bfm-border);
+      border-bottom: none;
+      color: #374151;
+      cursor: pointer;
+      margin-bottom: -1px;
+    }
+
+    .quote-sub-tab.active {
+      background: #ffffff;
+      font-weight: 600;
+      color: #111827;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .quotation-split-layout {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .quotation-main-panel {
+      flex: 1 1 68%;
+      min-width: 0;
+    }
+
+    .quotation-cost-panel {
+      width: 300px;
+      min-width: 290px;
+      flex-shrink: 0;
+    }
+
+    .badge-internal-only {
+      border: 1px solid #c2410c;
+      color: #c2410c;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 1px;
+      margin-left: 6px;
+      letter-spacing: 0.3px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .cost-input-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--bfm-border);
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .cost-input-table th {
+      background-color: var(--bfm-table-th);
+      border: 1px solid var(--bfm-border);
+      padding: 2.5px 6px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .cost-input-table td {
+      border: 1px solid var(--bfm-border);
+      padding: 2px 4px;
+      vertical-align: middle;
+    }
+
+    .cost-input-table input {
+      width: 100%;
+      height: 20px;
+      padding: 1px 4px;
+      font-size: 11px;
+      text-align: right;
+      border: 1px solid #b8c0cc;
+      background: #ffffff;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .cost-input-table input:focus {
+      border-color: var(--bfm-orange);
+    }
+
+    .cost-result-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--bfm-border);
+      font-size: 11px;
+    }
+
+    .cost-result-table th {
+      background-color: var(--bfm-table-th);
+      border: 1px solid var(--bfm-border);
+      padding: 2.5px 6px;
+      font-weight: 600;
+    }
+
+    .cost-result-table td {
+      border: 1px solid var(--bfm-border);
+      padding: 2px 6px;
+    }
+
+    .cost-result-table tr.total-row td {
+      background-color: #fdf5eb;
+      font-weight: 700;
+    }
+
+    .approval-alert-container {
+      margin-top: 10px;
+    }
+
+    .approval-alert-heading {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .approval-alert-box {
+      border: 1px solid #facc15;
+      background-color: #fefce8;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: #1f2937;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="erp-container">
+
+    <!-- Top Header Bar -->
+    <header class="erp-header">
+      <div class="erp-brand-wrap">
+        <div class="erp-brand-title">
+          PT Big Fortune<span class="brand-orange">Mesindo</span>
+        </div>
+        <div class="erp-brand-subtitle">ERP and MES</div>
+      </div>
+
+      <div class="erp-user-meta">
+        <div>Company: <span id="header-plant-display"><strong>BFM Semarang Plant</strong></span></div>
+        <div>User: <span id="header-user-display"><strong>Sari Anggraini</strong> (Sales Admin)</span></div>
+        <a href="/login" class="erp-signout-btn" onclick="handleSignOut(event)">Sign out</a>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="erp-nav-bar">
+      <a class="erp-nav-tab" href="/">Home</a>
+      <a class="erp-nav-tab" href="/crm">CRM</a>
+      <a class="erp-nav-tab active" href="/quotations">Quotations</a>
+      <a class="erp-nav-tab" href="/documents">Documents</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Production')">Production</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Inventory')">Inventory</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Reports')">Reports</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Setup')">Setup</a>
+    </nav>
+
+    <!-- Main Workspace Body -->
+    <div class="erp-body">
+
+      <!-- Left Sidebar: High-Density Counters -->
+      <aside class="erp-sidebar">
+        <!-- CRM Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CRM</div>
+          <a class="sidebar-item" href="/crm">
+            <span class="item-label">Sales pipeline</span>
+            <span class="item-count">14</span>
+          </a>
+          <a class="sidebar-item selected" href="/quotations">
+            <span class="item-label">Quotations</span>
+            <span class="item-count">9</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Customers</span>
+            <span class="item-count">126</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Contracts</span>
+            <span class="item-count">18</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Sales orders</span>
+            <span class="item-count">41</span>
+          </a>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Documents</div>
+          <a class="sidebar-item" href="/documents">
+            <span class="item-label">Document register</span>
+            <span class="item-count">3,284</span>
+          </a>
+          <a class="sidebar-item alert" href="/documents">
+            <span class="item-label">Needs attention</span>
+            <span class="item-count">4</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Center / Right Main Content -->
+      <main class="erp-content">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-label" id="main-breadcrumb">CRM &gt; Quotations &gt; QT-2026-0153</div>
+        
+        <!-- Page Title -->
+        <h1 class="page-title" style="margin-bottom: 6px;">
+          Quotation QT-2026-0153, revision 02 <span style="font-weight:normal; color:#6b7280;">(Pending approval)</span>
+        </h1>
+
+        <!-- Action Toolbar -->
+        <div class="crm-action-bar" style="margin-bottom: 8px;">
+          <div class="crm-btn-group">
+            <button class="btn-action-tool" onclick="duplicateRevision()">Duplicate as new revision</button>
+            <button class="btn-action-tool" onclick="requestApproval()">Request approval</button>
+            <button class="btn-new-opportunity" onclick="generatePdf()" style="padding: 3px 12px; font-weight:700;">Generate customer PDF</button>
+            <button class="btn-action-tool" onclick="viewAttachments()">Attachments (3)</button>
+          </div>
+          <div style="font-size: 11px; color: #4b5563;">
+            Created by Sari, 04 Nov 2026
+          </div>
+        </div>
+
+        <!-- Quotation Header Form Grid -->
+        <div class="quote-header-grid">
+          <!-- Left Column -->
+          <div>
+            <div class="quote-field-row">
+              <span class="quote-field-label">Customer</span>
+              <input type="text" class="mfg-input" value="PT Sumber Otomotif Nusantara" readonly style="background:#f8fafc;">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label">Ship-to</span>
+              <input type="text" class="mfg-input" value="Plant 2, Jl. Industri Raya, Bekasi">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label">Currency</span>
+              <input type="text" class="mfg-input" value="IDR" style="max-width: 120px;">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label">Incoterm</span>
+              <input type="text" class="mfg-input" value="DAP" style="max-width: 120px;">
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <div class="quote-field-row">
+              <span class="quote-field-label" style="width: 85px;">Opportunity</span>
+              <input type="text" class="mfg-input" value="OPP-0412" readonly style="background:#f8fafc; color:#1859ad; font-weight:600; cursor:pointer;" onclick="window.location.href='/crm'">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label" style="width: 85px;">Valid until</span>
+              <input type="text" class="mfg-input" value="15 Dec 2026">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label" style="width: 85px;">Exchange rate</span>
+              <input type="text" class="mfg-input" value="USD 1 = Rp 16,250 (rate date 07 Nov 2026)">
+            </div>
+            <div class="quote-field-row">
+              <span class="quote-field-label" style="width: 85px;">Payment terms</span>
+              <input type="text" class="mfg-input" value="30 days after invoice">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub Tabs (Lines, Tooling, Documents, Approval history) -->
+        <div class="quote-sub-tabs">
+          <div class="quote-sub-tab active" onclick="switchQuoteSubTab('Lines', this)">Lines</div>
+          <div class="quote-sub-tab" onclick="switchQuoteSubTab('Tooling', this)">Tooling</div>
+          <div class="quote-sub-tab" onclick="switchQuoteSubTab('Documents', this)">Documents</div>
+          <div class="quote-sub-tab" onclick="switchQuoteSubTab('Approval history', this)">Approval history</div>
+        </div>
+
+        <!-- Split Workspace Layout: Lines on Left, Cost basis on Right -->
+        <div class="quotation-split-layout">
+          
+          <!-- Left Panel: Line items & Approval status -->
+          <div class="quotation-main-panel">
+            <div class="dense-table-wrapper">
+              <table class="dense-table" id="quote-lines-table">
+                <thead>
+                  <tr>
+                    <th style="width: 5%;">Line</th>
+                    <th style="width: 17%;">Customer part no</th>
+                    <th style="width: 5%;">Rev</th>
+                    <th style="width: 18%;">Description</th>
+                    <th style="width: 13%;">Material</th>
+                    <th class="text-right" style="width: 13%;">Qty break 1</th>
+                    <th class="text-right" style="width: 12%;">Unit price (IDR)</th>
+                    <th style="width: 17%;">Price source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Line 1: Active / Focused (Peach background) -->
+                  <tr class="row-highlight" id="line-row-1" onclick="selectLine(1)">
+                    <td class="text-center">1</td>
+                    <td>BKT-4411</td>
+                    <td class="text-center">C</td>
+                    <td>Bracket, left</td>
+                    <td>PA66 GF30</td>
+                    <td class="text-right">50,000</td>
+                    <td class="text-right" id="line-1-price-display" style="font-weight:600;">900</td>
+                    <td>Cost basis</td>
+                  </tr>
+                  <!-- Line 2 -->
+                  <tr id="line-row-2" onclick="selectLine(2)">
+                    <td class="text-center">2</td>
+                    <td>BKT-4411</td>
+                    <td class="text-center">C</td>
+                    <td>Bracket, right</td>
+                    <td>PA66 GF30</td>
+                    <td class="text-right">50,000</td>
+                    <td class="text-right">0</td>
+                    <td>Copied from line 1</td>
+                  </tr>
+                  <!-- Line 3 -->
+                  <tr id="line-row-3" onclick="selectLine(3)">
+                    <td class="text-center">3</td>
+                    <td>BKT-4411-S</td>
+                    <td class="text-center">A</td>
+                    <td>Clip set, service</td>
+                    <td>POM</td>
+                    <td class="text-right">10,000</td>
+                    <td class="text-right">0</td>
+                    <td>Manual (reason and approver required)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Warning notice for manual price -->
+            <div style="font-size: 11px; color: #4b5563; margin-bottom: 6px;">
+              Line 3 has a manual price. Enter a reason code and approver before the quotation can be sent.
+            </div>
+
+            <!-- Line Action Buttons -->
+            <div class="crm-btn-group" style="margin-bottom: 12px;">
+              <button class="btn-action-tool" onclick="addLine()">Add line</button>
+              <button class="btn-action-tool" onclick="deleteLine()">Delete line</button>
+            </div>
+
+            <!-- Approval Status Box -->
+            <div class="approval-alert-container">
+              <div class="approval-alert-heading">Approval status</div>
+              <div class="approval-alert-box">
+                Margin 15% is below the 18% threshold. Finance approval is required before sending.
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Cost basis, line 1 [INTERNAL ONLY] -->
+          <div class="quotation-cost-panel">
+            <div style="margin-bottom: 4px; display:flex; align-items:center;">
+              <strong style="font-size:11.5px; color:#111827;" id="cost-basis-title">Cost basis, line 1</strong>
+              <span class="badge-internal-only">INTERNAL ONLY</span>
+            </div>
+
+            <!-- Cost Basis Input Table -->
+            <table class="cost-input-table">
+              <thead>
+                <tr>
+                  <th style="width: 70%;">Input</th>
+                  <th class="text-right" style="width: 30%;">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Part weight (g)</td>
+                  <td><input type="number" id="inp-part-weight" value="12" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Runner weight (g)</td>
+                  <td><input type="number" id="inp-runner-weight" value="2" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Resin price (IDR/kg)</td>
+                  <td><input type="number" id="inp-resin-price" value="22000" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Scrap (%)</td>
+                  <td><input type="number" id="inp-scrap" value="3" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Cavities</td>
+                  <td><input type="number" id="inp-cavities" value="4" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Cycle time (s)</td>
+                  <td><input type="number" id="inp-cycle-time" value="18" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Efficiency (%)</td>
+                  <td><input type="number" id="inp-efficiency" value="85" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Machine rate (IDR/h)</td>
+                  <td><input type="number" id="inp-machine-rate" value="45000" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Secondary operations (IDR/pc)</td>
+                  <td><input type="number" id="inp-sec-ops" value="350" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Packaging (IDR/pc)</td>
+                  <td><input type="number" id="inp-packaging" value="120" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Freight (IDR/pc)</td>
+                  <td><input type="number" id="inp-freight" value="80" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Overhead (%)</td>
+                  <td><input type="number" id="inp-overhead" value="10" oninput="recalcCostBasis()"></td>
+                </tr>
+                <tr>
+                  <td>Margin target (%)</td>
+                  <td><input type="number" id="inp-margin" value="15" oninput="recalcCostBasis()"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Cost Basis Result Table -->
+            <table class="cost-result-table">
+              <thead>
+                <tr>
+                  <th style="width: 70%;">Result</th>
+                  <th class="text-right" style="width: 30%;">IDR per piece</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Material</td>
+                  <td class="text-right" id="res-material">79</td>
+                </tr>
+                <tr>
+                  <td>Machine</td>
+                  <td class="text-right" id="res-machine">66</td>
+                </tr>
+                <tr>
+                  <td>Secondary, packaging, freight</td>
+                  <td class="text-right" id="res-secondary">550</td>
+                </tr>
+                <tr>
+                  <td>Overhead</td>
+                  <td class="text-right" id="res-overhead">70</td>
+                </tr>
+                <tr>
+                  <td>Unit cost</td>
+                  <td class="text-right" id="res-unit-cost" style="font-weight:600;">765</td>
+                </tr>
+                <tr class="total-row">
+                  <td>Unit price</td>
+                  <td class="text-right" id="res-unit-price" style="font-weight:700;">900</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Bottom Windows ERP Status Bar -->
+    <footer class="erp-status-bar">
+      <div class="status-bar-left">
+        <span class="status-item"><span class="status-indicator-dot"></span> Ready</span>
+        <span class="status-item">Server: <span id="status-server-display">ERP-PROD</span></span>
+        <span class="status-item">Database: <span id="status-db-display">BFM_ERP</span></span>
+      </div>
+      <div class="status-bar-right">
+        <span class="status-item">Logged in: <span id="status-user-display">Sari Anggraini</span></span>
+        <span class="status-item" id="status-live-time">07 Nov 2026 09:14</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Metro Modal Backdrop & Dialog Container -->
+  <div class="metro-modal-backdrop" id="erp-modal-backdrop" onclick="if(event.target === this) closeErpModal()">
+    <div class="metro-modal-window">
+      <div class="metro-modal-header">
+        <span id="erp-modal-title">Record Details</span>
+        <button onclick="closeErpModal()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#444;">&times;</button>
+      </div>
+      <div class="metro-modal-body" id="erp-modal-body"></div>
+      <div class="metro-modal-footer" id="erp-modal-footer">
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/metro.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    // Live Calculation of Cost Basis Engine
+    function recalcCostBasis() {
+      const partW = parseFloat(document.getElementById('inp-part-weight').value) || 0;
+      const runnerW = parseFloat(document.getElementById('inp-runner-weight').value) || 0;
+      const resinPrice = parseFloat(document.getElementById('inp-resin-price').value) || 0;
+      const scrapPct = parseFloat(document.getElementById('inp-scrap').value) || 0;
+      const cavities = parseFloat(document.getElementById('inp-cavities').value) || 1;
+      const cycleTime = parseFloat(document.getElementById('inp-cycle-time').value) || 1;
+      const efficiencyPct = parseFloat(document.getElementById('inp-efficiency').value) || 100;
+      const machineRate = parseFloat(document.getElementById('inp-machine-rate').value) || 0;
+      const secOps = parseFloat(document.getElementById('inp-sec-ops').value) || 0;
+      const packaging = parseFloat(document.getElementById('inp-packaging').value) || 0;
+      const freight = parseFloat(document.getElementById('inp-freight').value) || 0;
+      const overheadPct = parseFloat(document.getElementById('inp-overhead').value) || 0;
+      const marginPct = parseFloat(document.getElementById('inp-margin').value) || 0;
+
+      // 1. Material Cost:
+      // Weight per piece including runner allocation & scrap
+      const totalWeightKg = ((partW + (runnerW / cavities)) / 1000) * (1 + (scrapPct / 100));
+      const matCost = Math.round(totalWeightKg * resinPrice);
+
+      // 2. Machine Cost per piece:
+      // Shots per hour = (3600 / cycleTime) * (efficiency / 100)
+      // Pieces per hour = shotsPerHour * cavities
+      const shotsPerHour = (3600 / cycleTime) * (efficiencyPct / 100);
+      const pcsPerHour = shotsPerHour * cavities;
+      const machCost = Math.round(pcsPerHour > 0 ? (machineRate / pcsPerHour) : 0);
+
+      // 3. Secondary, packaging, freight:
+      const secondaryCost = Math.round(secOps + packaging + freight);
+
+      // Subtotal direct cost:
+      const directCost = matCost + machCost + secondaryCost;
+
+      // 4. Overhead:
+      const overheadCost = Math.round(directCost * (overheadPct / 100));
+
+      // 5. Total Unit Cost:
+      const unitCost = directCost + overheadCost;
+
+      // 6. Unit Price based on Target Margin:
+      // Unit Price = Unit Cost / (1 - (margin / 100)) or Unit Cost * (1 + margin)
+      let unitPrice = Math.round(unitCost / (1 - (marginPct / 100)));
+      if (unitPrice < unitCost) unitPrice = Math.round(unitCost * 1.15);
+
+      // Update DOM
+      document.getElementById('res-material').innerText = matCost.toLocaleString('id-ID');
+      document.getElementById('res-machine').innerText = machCost.toLocaleString('id-ID');
+      document.getElementById('res-secondary').innerText = secondaryCost.toLocaleString('id-ID');
+      document.getElementById('res-overhead').innerText = overheadCost.toLocaleString('id-ID');
+      document.getElementById('res-unit-cost').innerText = unitCost.toLocaleString('id-ID');
+      document.getElementById('res-unit-price').innerText = unitPrice.toLocaleString('id-ID');
+
+      // Update line 1 table display
+      const lineDisp = document.getElementById('line-1-price-display');
+      if (lineDisp) lineDisp.innerText = unitPrice.toLocaleString('id-ID');
+    }
+
+    // Select row
+    function selectLine(lineNum) {
+      document.querySelectorAll('#quote-lines-table tbody tr').forEach(r => r.classList.remove('row-highlight'));
+      const targetRow = document.getElementById(`line-row-${lineNum}`);
+      if (targetRow) targetRow.classList.add('row-highlight');
+      document.getElementById('cost-basis-title').innerText = `Cost basis, line ${lineNum}`;
+    }
+
+    // Sub tabs
+    function switchQuoteSubTab(tabName, el) {
+      document.querySelectorAll('.quote-sub-tab').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      if (tabName !== 'Lines') {
+        alert(`Switched to ${tabName} view for Quotation QT-2026-0153.`);
+      }
+    }
+
+    function duplicateRevision() {
+      if (confirm("Duplicate Quotation QT-2026-0153 as new revision 03?")) {
+        alert("Created new revision: QT-2026-0153 Rev 03 (Draft).");
+      }
+    }
+
+    function requestApproval() {
+      alert("Approval request submitted to Finance & Plant Director (Target threshold: 18%).");
+    }
+
+    function generatePdf() {
+      alert("Generated Customer Quotation PDF: QT-2026-0153_Rev02_PT_Sumber_Otomotif.pdf");
+    }
+
+    function viewAttachments() {
+      const html = `
+        <div style="font-size:11.5px; margin-bottom:8px;"><strong>Attachments for Quotation QT-2026-0153:</strong></div>
+        <table class="dense-table">
+          <thead>
+            <tr><th>File Name</th><th>Type</th><th>Size</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DRW-BKT4411_C_DRAWING_20260315.pdf</td><td>2D Part Drawing</td><td>2.4 MB</td><td><a href="javascript:void(0)" onclick="alert('Viewing drawing...')">Preview</a></td></tr>
+            <tr><td>BKT4411_Moldflow_Analysis_R2.pdf</td><td>Moldflow Simulation</td><td>5.1 MB</td><td><a href="javascript:void(0)" onclick="alert('Viewing report...')">Preview</a></td></tr>
+            <tr><td>Material_Datasheet_PA66_GF30_DuPont.pdf</td><td>Material Cert</td><td>840 KB</td><td><a href="javascript:void(0)" onclick="alert('Viewing cert...')">Preview</a></td></tr>
+          </tbody>
+        </table>
+      `;
+      openErpModal("Quotation Attachments (3 Files)", html);
+    }
+
+    function addLine() {
+      const tbody = document.querySelector('#quote-lines-table tbody');
+      const count = tbody.querySelectorAll('tr').length + 1;
+      const tr = document.createElement('tr');
+      tr.id = `line-row-${count}`;
+      tr.onclick = function() { selectLine(count); };
+      tr.innerHTML = `
+        <td class="text-center">${count}</td>
+        <td>BKT-4411-OPT</td>
+        <td class="text-center">A</td>
+        <td>Optional Bracket Assy</td>
+        <td>PA66 GF30</td>
+        <td class="text-right">25,000</td>
+        <td class="text-right">0</td>
+        <td>Cost basis</td>
+      `;
+      tbody.appendChild(tr);
+      selectLine(count);
+    }
+
+    function deleteLine() {
+      const tbody = document.querySelector('#quote-lines-table tbody');
+      const rows = tbody.querySelectorAll('tr');
+      if (rows.length > 1) {
+        tbody.removeChild(rows[rows.length - 1]);
+        selectLine(1);
+      } else {
+        alert("Cannot delete the primary quotation line item.");
+      }
+    }
+  </script>
+</body>
+</html>

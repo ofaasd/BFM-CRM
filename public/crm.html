@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Pipeline - PT Big Fortune Mesindo ERP and MES</title>
+  <!-- Metro UI Framework -->
+  <link rel="stylesheet" href="/css/metro-all.min.css">
+  <!-- High Density Manufacturing Custom CSS -->
+  <link rel="stylesheet" href="/css/app-manufacturing.css">
+</head>
+<body>
+
+  <div class="erp-container">
+
+    <!-- Top Header Bar -->
+    <header class="erp-header">
+      <div class="erp-brand-wrap">
+        <div class="erp-brand-title">
+          PT Big Fortune<span class="brand-orange">Mesindo</span>
+        </div>
+        <div class="erp-brand-subtitle">ERP and MES</div>
+      </div>
+
+      <div class="erp-user-meta">
+        <div>Company: <span id="header-plant-display"><strong>BFM Semarang Plant</strong></span></div>
+        <div>User: <span id="header-user-display"><strong>Sari Anggraini</strong> (Sales Admin)</span></div>
+        <a href="/login" class="erp-signout-btn" onclick="handleSignOut(event)">Sign out</a>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="erp-nav-bar">
+      <a class="erp-nav-tab" href="/">Home</a>
+      <a class="erp-nav-tab active" href="/crm">CRM</a>
+      <a class="erp-nav-tab" href="/quotations">Quotations</a>
+      <a class="erp-nav-tab" href="/documents">Documents</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Production')">Production</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Inventory')">Inventory</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Reports')">Reports</a>
+      <a class="erp-nav-tab" href="javascript:void(0)" onclick="switchTab('Setup')">Setup</a>
+    </nav>
+
+    <!-- Main Workspace Body -->
+    <div class="erp-body">
+
+      <!-- Left Sidebar: High-Density Counters -->
+      <aside class="erp-sidebar">
+        <!-- CRM Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CRM</div>
+          <a class="sidebar-item selected" href="/crm">
+            <span class="item-label">Sales pipeline</span>
+            <span class="item-count">14</span>
+          </a>
+          <a class="sidebar-item" href="/quotations">
+            <span class="item-label">Quotations</span>
+            <span class="item-count">9</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Customers</span>
+            <span class="item-count">126</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Contracts</span>
+            <span class="item-count">18</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Sales orders</span>
+            <span class="item-count">41</span>
+          </a>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Documents</div>
+          <a class="sidebar-item" href="/documents">
+            <span class="item-label">Document register</span>
+            <span class="item-count">3,284</span>
+          </a>
+          <a class="sidebar-item alert" href="/documents">
+            <span class="item-label">Needs attention</span>
+            <span class="item-count">4</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Center / Right Main Content -->
+      <main class="erp-content">
+        <div class="breadcrumb-label" id="main-breadcrumb">CRM &gt; Sales pipeline</div>
+        <h1 class="page-title">Sales pipeline</h1>
+
+        <!-- Filter Box -->
+        <div class="crm-filter-container">
+          <!-- Row 1: Stage and Owner -->
+          <div class="crm-filter-row">
+            <div class="crm-filter-group" style="width: 320px;">
+              <label for="filter-stage" style="width: 130px;">Stage</label>
+              <select class="mfg-select" id="filter-stage" onchange="filterPipelineRows()">
+                <option value="All open stages" selected>All open stages</option>
+                <option value="Quoted">Quoted</option>
+                <option value="Feasibility review">Feasibility review</option>
+                <option value="RFQ received">RFQ received</option>
+                <option value="Negotiation">Negotiation</option>
+                <option value="All">All Stages (incl. Closed)</option>
+              </select>
+            </div>
+            <div class="crm-filter-group" style="width: 260px;">
+              <label for="filter-owner" style="width: 50px;">Owner</label>
+              <select class="mfg-select" id="filter-owner" onchange="filterPipelineRows()">
+                <option value="All" selected>All</option>
+                <option value="Dani">Dani</option>
+                <option value="Rina">Rina</option>
+                <option value="Sari">Sari</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Customer / Prospect and Target SOP from -->
+          <div class="crm-filter-row" style="margin-top: 4px;">
+            <div class="crm-filter-group" style="width: 320px;">
+              <label for="filter-customer" style="width: 130px;">Customer or prospect</label>
+              <input type="text" class="mfg-input" id="filter-customer" placeholder="Type to search" oninput="filterPipelineRows()">
+            </div>
+            <div class="crm-filter-group" style="width: 260px;">
+              <label for="filter-sop" style="width: 90px;">Target SOP from</label>
+              <input type="text" class="mfg-input" id="filter-sop" placeholder="dd/mm/yyyy" oninput="filterPipelineRows()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Bar: New Opportunity, Refresh, Export, Record count -->
+        <div class="crm-action-bar">
+          <div class="crm-btn-group">
+            <button class="btn-new-opportunity" onclick="openNewOpportunityModal()">New opportunity</button>
+            <button class="btn-action-tool" onclick="refreshPipelineTable()">Refresh</button>
+            <button class="btn-action-tool" onclick="exportPipelineCsv()">Export</button>
+          </div>
+          <div class="crm-records-count" id="pipeline-count-display">14 records</div>
+        </div>
+
+        <!-- Dense Pipeline Table -->
+        <div class="dense-table-wrapper">
+          <table class="dense-table" id="pipeline-table">
+            <thead>
+              <tr>
+                <th style="width: 8%;">Opp no</th>
+                <th style="width: 20%;">Prospect / customer</th>
+                <th style="width: 20%;">Product, material</th>
+                <th style="width: 12%;">Stage</th>
+                <th style="width: 7%;">Owner</th>
+                <th class="text-right" style="width: 9%;">Est. annual qty</th>
+                <th class="text-right" style="width: 10%;">Est. value (IDR)</th>
+                <th style="width: 7%;">Target SOP</th>
+                <th style="width: 8%;">Last update</th>
+                <th style="width: 9%;">Quote</th>
+              </tr>
+            </thead>
+            <tbody id="pipeline-tbody">
+
+              <!-- Group 1: Quoted (4) -->
+              <tr class="group-header" data-stage="Quoted">
+                <td colspan="10">Quoted (4)</td>
+              </tr>
+              <tr class="row-highlight" data-stage="Quoted" data-owner="Dani" data-customer="PT Sumber Otomotif Nusantara">
+                <td><a href="javascript:viewOppDetail('OPP-0412', 'PT Sumber Otomotif Nusantara', 'Bracket BKT-4411, PA66 GF30', 'Quoted', 'Dani', '600,000', '412,000,000', 'Jan 2027', '06 Nov 2026', 'QT-2026-0153')">OPP-0412</a></td>
+                <td>PT Sumber Otomotif Nusantara</td>
+                <td>Bracket BKT-4411, PA66 GF30</td>
+                <td>Quoted</td>
+                <td>Dani</td>
+                <td class="text-right">600,000</td>
+                <td class="text-right">412,000,000</td>
+                <td>Jan 2027</td>
+                <td>06 Nov 2026</td>
+                <td><a href="/quotations/QT-2026-0153">QT-2026-0153</a></td>
+              </tr>
+              <tr data-stage="Quoted" data-owner="Rina" data-customer="PT Maju Peralatan Rumah">
+                <td><a href="javascript:viewOppDetail('OPP-0398', 'PT Maju Peralatan Rumah', 'Cover CVR-1208, PP', 'Quoted', 'Rina', '240,000', '97,250,000', 'Dec 2026', '02 Nov 2026', 'QT-2026-0161')">OPP-0398</a></td>
+                <td>PT Maju Peralatan Rumah</td>
+                <td>Cover CVR-1208, PP</td>
+                <td>Quoted</td>
+                <td>Rina</td>
+                <td class="text-right">240,000</td>
+                <td class="text-right">97,250,000</td>
+                <td>Dec 2026</td>
+                <td>02 Nov 2026</td>
+                <td><a href="javascript:viewQuoteDetail('QT-2026-0161','03','PT Maju Peralatan Rumah','CVR-1208','Accepted','02 Nov 2026','97,250,000')">QT-2026-0161</a></td>
+              </tr>
+
+              <!-- Group 2: Feasibility review (2) -->
+              <tr class="group-header" data-stage="Feasibility review">
+                <td colspan="10">Feasibility review (2)</td>
+              </tr>
+              <tr data-stage="Feasibility review" data-owner="Sari" data-customer="PT Elektra Presisi Jaya">
+                <td><a href="javascript:viewOppDetail('OPP-0419', 'PT Elektra Presisi Jaya', 'Housing HSG-0932, ABS', 'Feasibility review', 'Sari', '180,000', '186,500,000', 'Feb 2027', '04 Nov 2026', '-')">OPP-0419</a></td>
+                <td>PT Elektra Presisi Jaya</td>
+                <td>Housing HSG-0932, ABS</td>
+                <td>Feasibility review</td>
+                <td>Sari</td>
+                <td class="text-right">180,000</td>
+                <td class="text-right">186,500,000</td>
+                <td>Feb 2027</td>
+                <td>04 Nov 2026</td>
+                <td>-</td>
+              </tr>
+              <tr data-stage="Feasibility review" data-owner="Dani" data-customer="PT Garuda Lampu">
+                <td><a href="javascript:viewOppDetail('OPP-0422', 'PT Garuda Lampu', 'Lens holder, PC', 'Feasibility review', 'Dani', '90,000', '92,000,000', 'Mar 2027', '30 Oct 2026', '-')">OPP-0422</a></td>
+                <td>PT Garuda Lampu</td>
+                <td>Lens holder, PC</td>
+                <td>Feasibility review</td>
+                <td>Dani</td>
+                <td class="text-right">90,000</td>
+                <td class="text-right">92,000,000</td>
+                <td>Mar 2027</td>
+                <td>30 Oct 2026</td>
+                <td>-</td>
+              </tr>
+
+              <!-- Group 3: RFQ received (3) -->
+              <tr class="group-header" data-stage="RFQ received">
+                <td colspan="10">RFQ received (3)</td>
+              </tr>
+              <tr data-stage="RFQ received" data-owner="Dani" data-customer="PT Lintas Otomotif">
+                <td><a href="javascript:viewOppDetail('OPP-0427', 'PT Lintas Otomotif', 'Bracket, PA66 GF30', 'RFQ received', 'Dani', '400,000', '240,000,000', 'Apr 2027', '05 Nov 2026', '-')">OPP-0427</a></td>
+                <td>PT Lintas Otomotif</td>
+                <td>Bracket, PA66 GF30</td>
+                <td>RFQ received</td>
+                <td>Dani</td>
+                <td class="text-right">400,000</td>
+                <td class="text-right">240,000,000</td>
+                <td>Apr 2027</td>
+                <td>05 Nov 2026</td>
+                <td>-</td>
+              </tr>
+              <tr data-stage="RFQ received" data-owner="Rina" data-customer="PT Tirta Kemasan">
+                <td><a href="javascript:viewOppDetail('OPP-0429', 'PT Tirta Kemasan', 'Closure cap, PP', 'RFQ received', 'Rina', '150,000', '68,000,000', 'Mar 2027', '03 Nov 2026', '-')">OPP-0429</a></td>
+                <td>PT Tirta Kemasan</td>
+                <td>Closure cap, PP</td>
+                <td>RFQ received</td>
+                <td>Rina</td>
+                <td class="text-right">150,000</td>
+                <td class="text-right">68,000,000</td>
+                <td>Mar 2027</td>
+                <td>03 Nov 2026</td>
+                <td>-</td>
+              </tr>
+
+              <!-- Group 4: Negotiation (2) -->
+              <tr class="group-header" data-stage="Negotiation">
+                <td colspan="10">Negotiation (2)</td>
+              </tr>
+              <tr data-stage="Negotiation" data-owner="Sari" data-customer="PT Nusa Medika Plastik">
+                <td><a href="javascript:viewOppDetail('OPP-0408', 'PT Nusa Medika Plastik', 'Cap CAP-0047, PP', 'Negotiation', 'Sari', '300,000', '54,900,000', 'Jan 2027', '31 Oct 2026', 'QT-2026-0164')">OPP-0408</a></td>
+                <td>PT Nusa Medika Plastik</td>
+                <td>Cap CAP-0047, PP</td>
+                <td>Negotiation</td>
+                <td>Sari</td>
+                <td class="text-right">300,000</td>
+                <td class="text-right">54,900,000</td>
+                <td>Jan 2027</td>
+                <td>31 Oct 2026</td>
+                <td><a href="javascript:viewQuoteDetail('QT-2026-0164','01','PT Nusa Medika Plastik','CAP-0047','Draft','31 Oct 2026','54,900,000')">QT-2026-0164</a></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer -->
+        <div class="crm-table-footer">
+          <div class="total-summary">Open pipeline total: IDR 2,840,000,000</div>
+          <div class="paging-info">Showing 1 to 9 of 14</div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Bottom Windows ERP Status Bar -->
+    <footer class="erp-status-bar">
+      <div class="status-bar-left">
+        <span class="status-item"><span class="status-indicator-dot"></span> Ready</span>
+        <span class="status-item">Server: <span id="status-server-display">ERP-PROD</span></span>
+        <span class="status-item">Database: <span id="status-db-display">BFM_ERP</span></span>
+      </div>
+      <div class="status-bar-right">
+        <span class="status-item">Logged in: <span id="status-user-display">Sari Anggraini</span></span>
+        <span class="status-item" id="status-live-time">07 Nov 2026 09:14</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Metro Modal Backdrop & Dialog Container -->
+  <div class="metro-modal-backdrop" id="erp-modal-backdrop" onclick="if(event.target === this) closeErpModal()">
+    <div class="metro-modal-window">
+      <div class="metro-modal-header">
+        <span id="erp-modal-title">Opportunity Details</span>
+        <button onclick="closeErpModal()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#444;">&times;</button>
+      </div>
+      <div class="metro-modal-body" id="erp-modal-body">
+        <!-- Injected Dynamically -->
+      </div>
+      <div class="metro-modal-footer" id="erp-modal-footer">
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/metro.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    // Live Client Filter for CRM Page
+    function filterPipelineRows() {
+      const stageVal = document.getElementById('filter-stage').value;
+      const ownerVal = document.getElementById('filter-owner').value;
+      const custVal = document.getElementById('filter-customer').value.trim().toLowerCase();
+
+      const tbody = document.getElementById('pipeline-tbody');
+      const rows = tbody.querySelectorAll('tr');
+
+      let currentGroupHeader = null;
+      let currentGroupVisibleCount = 0;
+
+      rows.forEach(row => {
+        if (row.classList.contains('group-header')) {
+          if (currentGroupHeader) {
+            currentGroupHeader.style.display = currentGroupVisibleCount > 0 ? '' : 'none';
+          }
+          currentGroupHeader = row;
+          currentGroupVisibleCount = 0;
+          return;
+        }
+
+        const rowStage = row.getAttribute('data-stage') || '';
+        const rowOwner = row.getAttribute('data-owner') || '';
+        const rowCust = (row.getAttribute('data-customer') || '').toLowerCase();
+
+        let matchStage = true;
+        if (stageVal !== 'All open stages' && stageVal !== 'All') {
+          matchStage = (rowStage === stageVal);
+        }
+
+        let matchOwner = true;
+        if (ownerVal !== 'All') {
+          matchOwner = (rowOwner === ownerVal);
+        }
+
+        let matchCust = true;
+        if (custVal) {
+          matchCust = rowCust.includes(custVal);
+        }
+
+        if (matchStage && matchOwner && matchCust) {
+          row.style.display = '';
+          currentGroupVisibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      if (currentGroupHeader) {
+        currentGroupHeader.style.display = currentGroupVisibleCount > 0 ? '' : 'none';
+      }
+    }
+
+    function refreshPipelineTable() {
+      document.getElementById('filter-stage').value = 'All open stages';
+      document.getElementById('filter-owner').value = 'All';
+      document.getElementById('filter-customer').value = '';
+      document.getElementById('filter-sop').value = '';
+      filterPipelineRows();
+      if (window.Metro && window.Metro.toast) {
+        Metro.toast.create("Pipeline table refreshed from ERP-PROD database.", null, 2000, "info");
+      }
+    }
+
+    function exportPipelineCsv() {
+      alert("Pipeline export generated: BFM_Sales_Pipeline_20261107.xlsx (14 Records)");
+    }
+
+    window.openNewOpportunityModal = function() {
+      const html = `
+        <form id="new-opp-form" onsubmit="handleCreateOpp(event)">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Opportunity ID</label>
+              <input type="text" class="mfg-input" value="OPP-0435" readonly style="background:#f1f5f9;">
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Sales Rep / Owner</label>
+              <select class="mfg-select" id="new-opp-owner">
+                <option value="Sari">Sari Anggraini (Sales Admin)</option>
+                <option value="Dani">Dani Prasetyo</option>
+                <option value="Rina">Rina Wulandari</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mfg-form-group">
+            <label class="mfg-form-label">Prospect / Customer Name</label>
+            <input type="text" class="mfg-input" id="new-opp-customer" placeholder="e.g. PT Toyota Boshoku Indonesia" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Product Description & Material Grade</label>
+              <input type="text" class="mfg-input" id="new-opp-product" placeholder="e.g. Center Bracket, PA66 GF30 or SPCC 2.3mm" required>
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Initial Stage</label>
+              <select class="mfg-select" id="new-opp-stage">
+                <option value="RFQ received" selected>RFQ received</option>
+                <option value="Feasibility review">Feasibility review</option>
+                <option value="Quoted">Quoted</option>
+                <option value="Negotiation">Negotiation</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Est. Annual Qty (Pcs)</label>
+              <input type="number" class="mfg-input" id="new-opp-qty" value="250000" required>
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Est. Annual Value (IDR)</label>
+              <input type="number" class="mfg-input" id="new-opp-val" value="325000000" required>
+            </div>
+            <div class="mfg-form-group">
+              <label class="mfg-form-label">Target SOP (Month/Yr)</label>
+              <input type="text" class="mfg-input" id="new-opp-sop" value="May 2027" required>
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; display:flex; justify-content:flex-end; gap: 6px;">
+            <button type="button" class="metro-dense-btn" onclick="closeErpModal()">Cancel</button>
+            <button type="submit" class="metro-dense-btn btn-primary">Save Opportunity</button>
+          </div>
+        </form>
+      `;
+      openErpModal("Register New Pipeline Opportunity", html);
+    };
+
+    window.handleCreateOpp = function(e) {
+      e.preventDefault();
+      const oppId = "OPP-0435";
+      const cust = document.getElementById("new-opp-customer").value;
+      const prod = document.getElementById("new-opp-product").value;
+      const stage = document.getElementById("new-opp-stage").value;
+      const owner = document.getElementById("new-opp-owner").value;
+      const qty = parseFloat(document.getElementById("new-opp-qty").value).toLocaleString('en-US');
+      const val = parseFloat(document.getElementById("new-opp-val").value).toLocaleString('en-US');
+      const sop = document.getElementById("new-opp-sop").value;
+
+      alert(`Opportunity ${oppId} (${cust}) saved successfully!`);
+      closeErpModal();
+
+      // Dynamically prepend row to tbody
+      const tbody = document.getElementById('pipeline-tbody');
+      const newTr = document.createElement('tr');
+      newTr.setAttribute('data-stage', stage);
+      newTr.setAttribute('data-owner', owner);
+      newTr.setAttribute('data-customer', cust);
+      newTr.className = 'row-highlight';
+      newTr.innerHTML = `
+        <td><a href="javascript:viewOppDetail('${oppId}','${cust}','${prod}','${stage}','${owner}','${qty}','${val}','${sop}','Just now','-')">${oppId}</a></td>
+        <td>${cust}</td>
+        <td>${prod}</td>
+        <td>${stage}</td>
+        <td>${owner}</td>
+        <td class="text-right">${qty}</td>
+        <td class="text-right">${val}</td>
+        <td>${sop}</td>
+        <td>Just now</td>
+        <td>-</td>
+      `;
+      tbody.insertBefore(newTr, tbody.children[1]);
+    };
+
+    window.viewOppDetail = function(oppNo, cust, prod, stage, owner, qty, val, sop, updateDate, quoteNo) {
+      const html = `
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; background: #f8fafc; padding: 8px; border: 1px solid #e2e8f0; font-size:11.5px;">
+          <div><strong>Opportunity No:</strong> ${oppNo}</div>
+          <div><strong>Current Stage:</strong> <span style="font-weight:700; color:#df6600;">${stage}</span></div>
+          <div><strong>Customer / Prospect:</strong> ${cust}</div>
+          <div><strong>Account Owner:</strong> ${owner}</div>
+          <div><strong>Product / Material:</strong> ${prod}</div>
+          <div><strong>Target SOP:</strong> ${sop}</div>
+          <div><strong>Est. Annual Volume:</strong> ${qty} pcs/year</div>
+          <div><strong>Est. Annual Value:</strong> IDR ${val}</div>
+          <div><strong>Last Update:</strong> ${updateDate}</div>
+          <div><strong>Linked Quote:</strong> ${quoteNo || '-'}</div>
+        </div>
+
+        <div style="font-weight:700; margin-bottom:4px;">Opportunity Stage Milestones:</div>
+        <table class="dense-table">
+          <thead>
+            <tr><th>Milestone</th><th>Target Date</th><th>PIC</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Drawing & 3D CAD Receipt</td><td>25 Oct 2026</td><td>${owner}</td><td><span style="color:#15803d; font-weight:600;">Completed</span></td></tr>
+            <tr><td>2. Moldflow & Tooling Feasibility</td><td>01 Nov 2026</td><td>Tooling Dept</td><td><span style="color:#15803d; font-weight:600;">Completed</span></td></tr>
+            <tr><td>3. Raw Material Pricing (Krakatau POSCO)</td><td>03 Nov 2026</td><td>Procurement</td><td><span style="color:#15803d; font-weight:600;">Completed</span></td></tr>
+            <tr><td>4. Customer Cost Breakdown Presentation</td><td>15 Nov 2026</td><td>${owner}</td><td><span style="color:#df6600; font-weight:600;">Scheduled</span></td></tr>
+          </tbody>
+        </table>
+      `;
+      const footer = `
+        ${quoteNo && quoteNo !== '-' ? `<button class="metro-dense-btn" onclick="viewQuoteDetail('${quoteNo}','02','${cust}','BKT-4411','Quoted','06 Nov 2026','${val}')">Open Linked Quote</button>` : `<button class="metro-dense-btn btn-primary" onclick="openNewQuoteModal()">Generate Quotation</button>`}
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      `;
+      openErpModal(`Pipeline Opportunity - ${oppNo}`, html, footer);
+    };
+  </script>
+</body>
+</html>
+

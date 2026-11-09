@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PT Big Fortune Mesindo - ERP and MES</title>
+  <!-- Metro UI Framework -->
+  <link rel="stylesheet" href="/css/metro-all.min.css">
+  <!-- High Density Manufacturing Custom CSS -->
+  <link rel="stylesheet" href="/css/app-manufacturing.css">
+</head>
+<body>
+
+  <div class="erp-container">
+
+    <!-- Top Header Bar -->
+    <header class="erp-header">
+      <div class="erp-brand-wrap">
+        <div class="erp-brand-title">
+          PT Big Fortune<span class="brand-orange">Mesindo</span>
+        </div>
+        <div class="erp-brand-subtitle">ERP and MES</div>
+      </div>
+
+      <div class="erp-user-meta">
+        <div>Company: <span id="header-plant-display"><strong>BFM Semarang Plant</strong></span></div>
+        <div>User: <span id="header-user-display"><strong>Sari Anggraini</strong> (Sales Admin)</span></div>
+        <a href="/login" class="erp-signout-btn" onclick="handleSignOut(event)">Sign out</a>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="erp-nav-bar">
+      <a class="erp-nav-tab active" href="/">Home</a>
+      <a class="erp-nav-tab" href="/crm">CRM</a>
+      <a class="erp-nav-tab" href="/quotations">Quotations</a>
+      <a class="erp-nav-tab" href="/documents">Documents</a>
+      <a class="erp-nav-tab" onclick="switchTab('Production', this)">Production</a>
+      <a class="erp-nav-tab" onclick="switchTab('Inventory', this)">Inventory</a>
+      <a class="erp-nav-tab" onclick="switchTab('Reports', this)">Reports</a>
+      <a class="erp-nav-tab" onclick="switchTab('Setup', this)">Setup</a>
+    </nav>
+
+    <!-- Main Workspace Body -->
+    <div class="erp-body">
+
+      <!-- Left Sidebar: High-Density Counters -->
+      <aside class="erp-sidebar">
+        <!-- CRM Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CRM</div>
+          <a class="sidebar-item" href="/crm">
+            <span class="item-label">Sales pipeline</span>
+            <span class="item-count">14</span>
+          </a>
+          <a class="sidebar-item" href="/quotations">
+            <span class="item-label">Quotations</span>
+            <span class="item-count">9</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Customers</span>
+            <span class="item-count">126</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Contracts</span>
+            <span class="item-count">18</span>
+          </a>
+          <a class="sidebar-item plain" href="javascript:void(0)">
+            <span class="item-label">Sales orders</span>
+            <span class="item-count">41</span>
+          </a>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Documents</div>
+          <a class="sidebar-item" href="/documents">
+            <span class="item-label">Document register</span>
+            <span class="item-count">3,284</span>
+          </a>
+          <a class="sidebar-item alert" href="/documents">
+            <span class="item-label">Needs attention</span>
+            <span class="item-count">4</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Center / Right Main Content -->
+      <main class="erp-content">
+        <div class="breadcrumb-label" id="main-breadcrumb">Home</div>
+        <h1 class="page-title">Work summary, Saturday 7 November 2026</h1>
+
+        <!-- Table 1: Work Summary -->
+        <div class="dense-table-wrapper">
+          <table class="dense-table">
+            <thead>
+              <tr>
+                <th style="width: 48%;">Item</th>
+                <th class="text-right" style="width: 14%;">Count</th>
+                <th class="text-right" style="width: 26%;">Value (IDR)</th>
+                <th style="width: 12%;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Open pipeline opportunities</td>
+                <td class="text-right">14</td>
+                <td class="text-right">2,040,000,000</td>
+                <td><a href="javascript:viewPipelineModal()">Open</a></td>
+              </tr>
+              <tr>
+                <td>Quotations waiting for approval</td>
+                <td class="text-right">3</td>
+                <td class="text-right">612,000,000</td>
+                <td><a href="javascript:viewApprovalModal()">Open</a></td>
+              </tr>
+              <tr>
+                <td>Win rate, last 90 days</td>
+                <td class="text-right">38%</td>
+                <td class="text-right">-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Documents needing action</td>
+                <td class="text-right">4</td>
+                <td class="text-right">-</td>
+                <td><a href="#document-alerts">Open</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table 2: Recent quotations -->
+        <div class="section-title">Recent quotations</div>
+        <div class="dense-table-wrapper">
+          <table class="dense-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">Quote no</th>
+                <th style="width: 6%;">Rev</th>
+                <th style="width: 32%;">Customer</th>
+                <th style="width: 14%;">Part no</th>
+                <th style="width: 14%;">Status</th>
+                <th style="width: 11%;">Date</th>
+                <th class="text-right" style="width: 18%;">Value (IDR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="/quotations/QT-2026-0153">QT-2026-0153</a></td>
+                <td>02</td>
+                <td>PT Sumber Otomotif Nusantara</td>
+                <td>BKT-4411</td>
+                <td><span class="status-pending-approval">Pending approval</span></td>
+                <td>06 Nov 2026</td>
+                <td class="text-right">412,000,000</td>
+              </tr>
+              <tr>
+                <td><a href="javascript:viewQuoteDetail('QT-2026-0158','01','PT Elektra Presisi Jaya','HSG-0932','Sent','04 Nov 2026','186,500,000')">QT-2026-0158</a></td>
+                <td>01</td>
+                <td>PT Elektra Presisi Jaya</td>
+                <td>HSG-0932</td>
+                <td><span class="status-sent">Sent</span></td>
+                <td>04 Nov 2026</td>
+                <td class="text-right">186,500,000</td>
+              </tr>
+              <tr>
+                <td><a href="javascript:viewQuoteDetail('QT-2026-0161','03','PT Maju Peralatan Rumah','CVR-1208','Accepted','02 Nov 2026','97,250,000')">QT-2026-0161</a></td>
+                <td>03</td>
+                <td>PT Maju Peralatan Rumah</td>
+                <td>CVR-1208</td>
+                <td><span class="status-accepted">Accepted</span></td>
+                <td>02 Nov 2026</td>
+                <td class="text-right">97,250,000</td>
+              </tr>
+              <tr>
+                <td><a href="javascript:viewQuoteDetail('QT-2026-0164','01','PT Nusa Medika Plastik','CAP-0047','Draft','31 Oct 2026','54,900,000')">QT-2026-0164</a></td>
+                <td>01</td>
+                <td>PT Nusa Medika Plastik</td>
+                <td>CAP-0047</td>
+                <td><span class="status-draft">Draft</span></td>
+                <td>31 Oct 2026</td>
+                <td class="text-right">54,900,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table 3: Document alerts -->
+        <div class="section-title" id="document-alerts">Document alerts</div>
+        <div class="dense-table-wrapper">
+          <table class="dense-table">
+            <thead>
+              <tr>
+                <th style="width: 16%;">Document no</th>
+                <th style="width: 32%;">File name</th>
+                <th style="width: 14%;">Status</th>
+                <th style="width: 38%;">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="javascript:viewDocumentAlertModal('DRW-BKT4411','DRW-BKT4411_C_DRAWING_20260315.pdf','Missing','Not found on NAS. Upload again or restore from backup.')">DRW-BKT4411</a></td>
+                <td>DRW-BKT4411_C_DRAWING_20260315.pdf</td>
+                <td><span class="status-missing">Missing</span></td>
+                <td>Not found on NAS. Upload again or restore from backup.</td>
+              </tr>
+              <tr>
+                <td><a href="javascript:viewDocumentAlertModal('PPAP-HSG0932','PPAP-HSG0932_L3_20261102.pdf','Pending storage','Waiting for upload check. Retry in 12 minutes.')">PPAP-HSG0932</a></td>
+                <td>PPAP-HSG0932_L3_20261102.pdf</td>
+                <td><span class="status-pending-storage">Pending storage</span></td>
+                <td>Waiting for upload check. Retry in 12 minutes.</td>
+              </tr>
+              <tr>
+                <td><a href="javascript:viewDocumentAlertModal('CoC-CVR1208','CoC-CVR1208_R1_20261019.pdf','Checksum','Hash changed after upload. File moved to quarantine.')">CoC-CVR1208</a></td>
+                <td>CoC-CVR1208_R1_20261019.pdf</td>
+                <td><span class="status-checksum">Checksum</span></td>
+                <td>Hash changed after upload. File moved to quarantine.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-footnote">
+          Last reconciliation: today 06:00. 3 alerts, 0 orphan files.
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Bottom Windows ERP Status Bar -->
+    <footer class="erp-status-bar">
+      <div class="status-bar-left">
+        <span class="status-item"><span class="status-indicator-dot"></span> Ready</span>
+        <span class="status-item">Server: <span id="status-server-display">ERP-PROD</span></span>
+        <span class="status-item">Database: <span id="status-db-display">BFM_ERP</span></span>
+      </div>
+      <div class="status-bar-right">
+        <span class="status-item">Logged in: <span id="status-user-display">Sari Anggraini</span></span>
+        <span class="status-item" id="status-live-time">07 Nov 2026 09:14</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Metro Modal Backdrop & Dialog Container -->
+  <div class="metro-modal-backdrop" id="erp-modal-backdrop" onclick="if(event.target === this) closeErpModal()">
+    <div class="metro-modal-window">
+      <div class="metro-modal-header">
+        <span id="erp-modal-title">Record Details</span>
+        <button onclick="closeErpModal()" style="background:none; border:none; font-size:16px; font-weight:bold; cursor:pointer; color:#444;">&times;</button>
+      </div>
+      <div class="metro-modal-body" id="erp-modal-body">
+        <!-- Dynamic Content Injected Here -->
+      </div>
+      <div class="metro-modal-footer" id="erp-modal-footer">
+        <button class="metro-dense-btn" onclick="closeErpModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/metro.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
+
